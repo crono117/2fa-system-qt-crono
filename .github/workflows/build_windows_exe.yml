@@ -1,0 +1,68 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          pip install "PySide2>=5.15.0" requests cryptography keyring loguru
+          pip install pyinstaller
+
+      - name: Clean previous build artifacts
+        shell: pwsh
+        run: |
+          if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
+          if (Test-Path "dist")  { Remove-Item -Recurse -Force "dist" }
+
+      - name: Build with PyInstaller
+        run: pyinstaller 2fa_system_qt.spec --clean
+
+      - name: Assemble distribution folder
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "dist\2FA_System_Distribution"
+          Copy-Item -Force "dist\2FA_System.exe" "dist\2FA_System_Distribution\"
+          Copy-Item -Force "config.ini"           "dist\2FA_System_Distribution\"
+
+      - name: Verify build output
+        shell: pwsh
+        run: |
+          $exe = "dist\2FA_System_Distribution\2FA_System.exe"
+          $cfg = "dist\2FA_System_Distribution\config.ini"
+          if (-not (Test-Path $exe)) {
+            Write-Error "BUILD FAILED — 2FA_System.exe not found"
+            exit 1
+          }
+          if (-not (Test-Path $cfg)) {
+            Write-Error "BUILD FAILED — config.ini not found"
+            exit 1
+          }
+          Write-Host "Build successful. Distribution contents:"
+          Get-ChildItem "dist\2FA_System_Distribution"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 2FA_System_Windows_Exe
+          path: dist/2FA_System_Distribution/
+          if-no-files-found: error
+          retention-days: 30
