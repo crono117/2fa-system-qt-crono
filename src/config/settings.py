@@ -11,8 +11,8 @@ from pathlib import Path
 def get_config_path() -> Path:
     """Get the path to config.ini file."""
     if getattr(sys, 'frozen', False):
-        exe_dir = Path(sys.executable).parent
-        config_path = exe_dir / 'config.ini'
+        # When bundled by PyInstaller, config.ini is extracted to _MEIPASS
+        config_path = Path(sys._MEIPASS) / 'config.ini'
     else:
         # Go up from src/config/ to frontend_pyside2/
         config_path = Path(__file__).parent.parent.parent / 'config.ini'

@@ -41,19 +41,13 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path "dist\2FA_System_Distribution"
           Copy-Item -Force "dist\2FA_System.exe" "dist\2FA_System_Distribution\"
-          Copy-Item -Force "config.ini"           "dist\2FA_System_Distribution\"
 
       - name: Verify build output
         shell: pwsh
         run: |
           $exe = "dist\2FA_System_Distribution\2FA_System.exe"
-          $cfg = "dist\2FA_System_Distribution\config.ini"
           if (-not (Test-Path $exe)) {
             Write-Error "BUILD FAILED — 2FA_System.exe not found"
-            exit 1
-          }
-          if (-not (Test-Path $cfg)) {
-            Write-Error "BUILD FAILED — config.ini not found"
             exit 1
           }
           Write-Host "Build successful. Distribution contents:"
