@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install "PySide2>=5.15.0" requests cryptography keyring loguru
+          pip install "PySide2>=5.15.0" shiboken2 requests cryptography keyring loguru
           pip install pyinstaller
 
       - name: Clean previous build artifacts

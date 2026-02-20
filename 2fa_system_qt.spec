@@ -13,6 +13,8 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, coll
 SPEC_DIR = Path(SPECPATH).resolve()
 
 # Collect all files for key packages
+pyside2_datas,       pyside2_binaries,       pyside2_hiddenimports       = collect_all('PySide2')
+shiboken2_datas,     shiboken2_binaries,     shiboken2_hiddenimports     = collect_all('shiboken2')
 requests_datas,      requests_binaries,      requests_hiddenimports      = collect_all('requests')
 cryptography_datas,  cryptography_binaries,  cryptography_hiddenimports  = collect_all('cryptography')
 loguru_datas,        loguru_binaries,        loguru_hiddenimports        = collect_all('loguru')
@@ -20,14 +22,17 @@ urllib3_datas,       urllib3_binaries,       urllib3_hiddenimports       = colle
 certifi_datas,       certifi_binaries,       certifi_hiddenimports       = collect_all('certifi')
 
 all_datas = (
+    pyside2_datas + shiboken2_datas +
     requests_datas + cryptography_datas + loguru_datas +
     urllib3_datas  + certifi_datas
 )
 all_binaries = (
+    pyside2_binaries + shiboken2_binaries +
     requests_binaries + cryptography_binaries + loguru_binaries +
     urllib3_binaries  + certifi_binaries
 )
 all_hiddenimports = (
+    pyside2_hiddenimports + shiboken2_hiddenimports +
     requests_hiddenimports + cryptography_hiddenimports + loguru_hiddenimports +
     urllib3_hiddenimports  + certifi_hiddenimports
 )
@@ -80,7 +85,7 @@ a = Analysis(
     pathex=[str(SPEC_DIR), str(SPEC_DIR / 'src')],
     binaries=all_binaries,
     datas=[
-        # Ship config.ini so the server URL is editable without rebuilding
+        # config.ini is bundled inside the exe (read via sys._MEIPASS at runtime)
         ('config.ini', '.'),
     ] + all_datas,
     hiddenimports=hidden_imports,
