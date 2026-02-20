@@ -1,0 +1,24 @@
+# Virtual environments
+.venv/
+venv/
+venv_build/
+
+# PyInstaller build artifacts
+build/
+dist/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Logs
+*.log
+
+# Credentials / keys
+.credentials
+.key
+
+# OS
+.DS_Store
+Thumbs.db
